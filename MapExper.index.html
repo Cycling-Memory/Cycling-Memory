@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Cycling Memory</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+    <!--jquery js-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- leaflet files -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+
+<!-- Map style -->
+<style>
+    body{
+        margin: 0
+    }
+    #myMap {
+        width: 100%;
+        height: 100%;
+        filter: grayscale(60%) saturate(100%) brightness(90%);
+    }
+</style>
+
+    <!--jQuery UI files-->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
+
+<!--jQuery UI Touch js, required for touchscreen use-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+<!-- Leaflet time-slider plugin -->
+<script src="js/SliderControl.js"></script>
+    </head>
+
+    <body>
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">Cycling Memory</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">About</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="modal fade" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel" aria-describedby="welcomeModalDescription" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5" id="welcomeModalLabel">Welcome to Cycling Memory</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="welcomeModalDescription">
+                        <p class="mb-0">The Cycling Memory project visualizes the growing popularity of bicycle-related events in the United States throughout a seventy year span. The map includes the location of inaugural rides, most of which continue to be held to this day on an annual basis. A variety of races are represented, like gravel and road races, and competitive and noncompetitive races.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Page content-->
+<div id="myMap"></div>
+	<script>
+		// the map code goes here
+		const map = L.map('myMap').setView([40.26558131375235, -96.74826406054488], 4.5);
+		L.tileLayer('https://api.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=33e2ceffbf7d491d8b864de8d085a412', {
+	maxZoom: 19,
+	attribution: '&copy; <a href= "https://www.thunderforest.com"> Maps Thunderforest </a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+}).addTo(map);
+
+// Custom Icon for Markers
+const BikeIcon = L.icon({
+    iconUrl: 'watch-for-bicycles-sign-01.svg',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40]
+})
+
+// Races Markers
+
+const racesData = {
+    type: 'FeatureCollection',
+    features: [
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-74.6035285215526, 40.56599684777648] },
+            properties: {
+                title: 'Tour of Somerville',
+                time: '1940-01-01 00:00:00',
+                description: 'First started in 1940, the Tour of Somerville is the oldest bicycle race in the US and continues to take place during Memorial Day weekend.',
+                image: 'CyclingMemory_IMGs/TourOfSomerville.jpg',
+                imageAlt: 'Start line of Tour of Somerville',
+                link: 'https://tourofsomerville.com/history/',
+                linkLabel: 'Tour of Somerville'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-83.0073097476525, 39.96501394461315] },
+            properties: {
+                title: 'Tour of Scioto River Valley',
+                time: '1962-01-01 00:00:00',
+                description: "The Tour of Scioto River Valley is a non-competitive bike tour typically held on Mother's Day weekend.",
+                image: 'CyclingMemory_IMGs/TourOfTheSciotoRiverValley.jpg',
+                imageAlt: 'Historic photo of racers in Tour of Scioto River Valley',
+                link: 'https://en.wikipedia.org/wiki/TOSRV',
+                linkLabel: 'Tour of Scioto River Valley'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-90.19625195967888, 38.62192634457358] },
+            properties: {
+                title: 'Moonlight (Midnight) Ramble',
+                time: '1967-01-01 00:00:00',
+                description: 'The Moonlight Ramble is the longest running nighttime bike ride in the United States.',
+                image: 'CyclingMemory_IMGs/MoonlightMidnightRamble.jpg',
+                imageAlt: 'Night shot of St. Louis arch.',
+                link: 'https://moonlightramble.com/about/',
+                linkLabel: 'Moonlight Ramble'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-84.55534054922462, 42.73351190519243] },
+            properties: {
+                title: 'DALMAC',
+                time: '1971-01-01 00:00:00',
+                description: 'DALMAC is a family-friendly bicycle tour that takes place over Labor Day.',
+                image: 'CyclingMemory_IMGs/DALMAC.jpg',
+                imageAlt: 'A bicycle lane in Lansing, MI',
+                link: 'https://www.dalmac.org',
+                linkLabel: 'DALMAC'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-96.39588306649692, 42.497634351701706] },
+            properties: {
+                title: 'RAGBRAI',
+                time: '1973-01-01 00:00:00',
+                description: 'The largest cycling tour in the world, RAGBRAI riders travel from Iowa’s state line at the Missouri River to the border of the Mississippi River.',
+                image: 'CyclingMemory_IMGs/RAGBRAI.jpg',
+                imageAlt: 'Two racers going around a corner in RAGBRAI',
+                link: 'https://ragbrai.com/history/',
+                linkLabel: 'RAGBRAI'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-73.97956212777906, 40.70604274980771] },
+            properties: {
+                title: 'Five Borough Bike Tour',
+                time: '1977-01-01 00:00:00',
+                description: 'The Five Borough Bike Tour is a recreational charity ride that takes place on the first Sunday of May.',
+                image: 'CyclingMemory_IMGs/FiveBorough.jpg',
+                imageAlt: 'Big crowd at start of Five Borough Bike Tour',
+                link: 'https://en.wikipedia.org/wiki/Five_Boro_Bike_Tour',
+                linkLabel: 'Five Borough Bike Tour'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-122.34393027088198, 47.60859697659441] },
+            properties: {
+                title: 'Seattle to Portland Classic',
+                time: '1979-01-01 00:00:00',
+                description: 'The STP is exactly what it sounds like: a recreational bike ride from Seattle, Washington to Portland, Oregon. It is one of the largest recreational rides in the country.',
+                image: 'CyclingMemory_IMGs/SeattleToPortland.jpg',
+                imageAlt: 'Black and white photo of group of STP participants',
+                link: 'https://en.wikipedia.org/wiki/Seattle_to_Portland_Bicycle_Classic',
+                linkLabel: 'STP'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-81.08932568803776, 32.081712369686805] },
+            properties: {
+                title: 'Bicycle Ride Across Georgia',
+                time: '1980-01-01 00:00:00',
+                description: 'Inspired by the RABRAI, the Bicycle Ride Across Georgia takes riders along a grueling path throughout the state.',
+                image: 'CyclingMemory_IMGs/BRAG.jpg',
+                imageAlt: 'Street with bicycle sign in Savannah, GA',
+                link: 'https://brag.org/about/#history',
+                linkLabel: 'BRAG'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-72.5823184703474, 42.10225024429395] },
+            properties: {
+                title: 'Pan-Mass Challenge',
+                time: '1980-01-01 00:00:00',
+                description: 'According to their website, the Pan-Mass Challenge is a Massachusetts-based bike-a-thon that raises more money for charity than any other single athletic fundraising event in the country.',
+                image: 'CyclingMemory_IMGs/PanMassChallenge.jpg',
+                imageAlt: 'Group of racers mid race in Pan-Mass Challenge',
+                link: 'https://www.pmc.org/about',
+                linkLabel: 'Pan-Mass Challenge'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-98.48608630120201, 33.91394726966377] },
+            properties: {
+                title: "Hotter'N Hell Hundred",
+                time: '1982-01-01 00:00:00',
+                description: 'This Texas-based ride emerged from the idea to do a 100 mile ride in 100 degree heat to celebrate the 100th year anniversary of Wichita Falls.',
+                image: 'CyclingMemory_IMGs/HotterNHellHundred.jpg',
+                imageAlt: 'Two cyclists pass group of people extending high fives',
+                link: 'https://hh100.org/history/',
+                linkLabel: 'HotterN Hell Hundred'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-111.83409102273265, 41.737827656027505] },
+            properties: {
+                title: 'LoToJa — Logan to Jackson',
+                time: '1983-01-01 00:00:00',
+                description: 'This 200+ mile race gives riders a grueling test of strength and stamina.',
+                image: 'CyclingMemory_IMGs/LOTOJA.jpg',
+                imageAlt: 'Group of racers at the starting line of the LoToJa race',
+                link: 'https://lotoja.com/About',
+                linkLabel: 'LOTOJA'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-110.98551521448623, 32.257275551532985] },
+            properties: {
+                title: 'El Tour de Tucson',
+                time: '1983-01-01 00:00:00',
+                description: 'El Tour de Tucson is a fundraising ride that attracts 7,000 to 10,000 riders each November.',
+                image: 'CyclingMemory_IMGs/ElTourDeTucson.jpg',
+                imageAlt: 'Landscape featuring trees and yellow grass in the foreground and mountains and blue skies in the background',
+                link: 'https://en.wikipedia.org/wiki/El_Tour_de_Tucson',
+                linkLabel: 'El Tour de Tucson'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-79.99672516747889, 40.43830184412609] },
+            properties: {
+                title: 'Dirty Dozen',
+                time: '1983-01-01 00:00:00',
+                description: 'The Dirty Dozen takes place the Saturday before Halloween. Its name comes from the twelve steep hills it takes its riders through.',
+                image: 'CyclingMemory_IMGs/DirtyDozenjpg',
+                imageAlt: 'A steep, descending brick road in the winter time with houses in the background',
+                link: 'https://en.wikipedia.org/wiki/Dirty_Dozen_(bicycle_competition)',
+                linkLabel: 'Dirty Dozen'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-108.5632245256128, 39.06961090109117] },
+            properties: {
+                title: 'Ride The Rockies',
+                time: '1986-01-01 00:00:00',
+                description: 'Ride the Rockies takes riders on a six-day journey through Colorado. Each year, the ride’s route changes, but it consistently takes riders through Colorado’s mountainous terrain.',
+                image: 'CyclingMemory_IMGs/RideTheRockies.jpeg',
+                imageAlt: 'Cyclists ride along a winding road flanked with tall green trees. Two mountains stand in the background',
+                link: 'https://10best.usatoday.com/awards/ride-rockies-colorado/',
+                linkLabel: 'Ride the Rockies'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-77.40384946359576, 42.745460009461844] },
+            properties: {
+                title: 'Highlander Road Tour',
+                time: '2000-01-01 00:00:00',
+                description: 'The Highlander Road Tour takes place each year, but takes riders on different courses. Sometimes courses are extremely challenging and sometimes, courses invite family participation.',
+                image: 'CyclingMemory_IMGs/HighlanderRoadTour.jpg',
+                imageAlt: 'A vintage postcard from Finger Lakes',
+                link: 'https://highlandercycletour.com/about/',
+                linkLabel: 'Highlander Road Tour'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-122.42421410376586, 37.774226909846405] },
+            properties: {
+                title: 'California Coast Classic Tour',
+                time: '2000-01-01 00:00:00',
+                description: 'The California Coast Classic Tour raises money for and raises awareness about the Arthritis Foundation.',
+                image: 'CyclingMemory_IMGs/CaliforniaCoastClassic.jpg',
+                imageAlt: 'Bikers riding in the bike lane of a Californian street',
+                link: 'https://events.arthritis.org/californiacoastclassic',
+                linkLabel: 'California Coast Classic'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-83.39859432400311, 41.91706344498281] },
+            properties: {
+                title: 'Barry-Roubaix Gravel Race',
+                time: '2005-01-01 00:00:00',
+                description: 'The Barry-Roubaix Gravel Race is the world’s largest gravel race taking place during the third Saturday in April.',
+                image: 'CyclingMemory_IMGs/BarryRoubaix.jpg',
+                imageAlt: 'Logo for the Barry-Roubaix 2009-2018, ten year anniversary',
+                link: 'https://barry-roubaix.com/news/2020/4/10/barry-roubaix-history',
+                linkLabel: 'Barry-Roubaix Gravel Race'
+            }
+        },
+        {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [-96.18342918070564, 38.40534083106464] },
+            properties: {
+                title: 'Unbound Gravel',
+                time: '2006-01-01 00:00:00',
+                description: 'Unbound Gravel is a popular, 200-mile gravel race located in Emporia, Kansas.',
+                image: 'CyclingMemory_IMGs/UnboundGravel.jpg',
+                imageAlt: 'Under a large theater sign, many cyclists congregate',
+                link: 'https://unboundgravel.com/about/',
+                linkLabel: 'Unbound Gravel'
+            }
+        }
+    ]
+};
+
+const group1 = L.geoJSON(racesData, {
+    pointToLayer: (feature, latlng) => L.marker(latlng, {
+        icon: BikeIcon,
+        alt: 'yellow diamond watch for bicycles sign'
+    }),
+    onEachFeature: (feature, layer) => {
+        const race = feature.properties;
+        layer.bindPopup(`<img src="${race.image}" alt="${race.imageAlt}" width="300" height="200"><h5>${race.title}</h5><p><b>${race.time.slice(0, 4)}</b></p><p>${race.description}</p><p><b>Learn more about the event here: </b><a href="${race.link}" target="_blank" rel="noopener noreferrer">${race.linkLabel}</a></p>`);
+    }
+});
+
+/*
+// Legacy individual marker definitions replaced by the GeoJSON features above.
+// Tour of Somerville 
+const markerSomer = new Marker([40.56599684777648, -74.6035285215526], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerSomer.bindPopup("<img src='CyclingMemory_IMGs/TourOfSomerville.jpg' alt='Start line of Tour of Somerville' width='300' height='200'><h5>Tour of Somerville</h5><p><b>1940</b></p><p>First started in 1940, the Tour of Somerville is the oldest bicycle race in the US and continues to take place during Memorial Day weekend.</p><p><b>Learn more about the race here: </b><a href='https://tourofsomerville.com/history/' target='_blank'>Tour of Somerville</a></p>");
+
+// Tour of Scioto River Valley
+const markerScioto = new Marker([39.96501394461315, -83.0073097476525], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerScioto.bindPopup("<img src='CyclingMemory_IMGs/TourOfTheSciotoRiverValley.jpg' alt='Historic photo of racers inTour of Scioto River Valley' width='300' height='200'><h5>Tour of Scioto River Valley</h5><p><b>1962</b></p><p>The Tour of Scioto River Valley is a non-competitive bike tour typically held on Mother's Day weekend.</p><p><b>Learn more about the race here: </b><a href='https://en.wikipedia.org/wiki/TOSRV' target='_blank'>Tour of Scioto River Valley</a></p>");
+
+// Moonlight (Midnight) Ramble
+const markerMidnight = new Marker([38.62192634457358, -90.19625195967888], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerMidnight.bindPopup("<img src='CyclingMemory_IMGs/MoonlightMidnightRamble.jpg' alt='Night shot of St. Louis arch.' width='300' height='200'><h5>Moonlight (Midnight) Ramble</h5><p><b>1967</b></p><p>The Moonlight Ramble is the longest running nighttime bike ride in the United States.</p><p><b>Learn more about the event here: </b><a href='https://moonlightramble.com/about/' target='_blank'>Moonlight Ramble</a></p>");
+
+// DALMAC
+const markerDALMAC = new Marker([42.73351190519243, -84.55534054922462], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerDALMAC.bindPopup("<img src='CyclingMemory_IMGs/DALMAC.jpg' alt='A bicycle lane in Lansing, MI' width='300' height='200'><h5>DALMAC</h5><p><b>1971</b></p><p>DALMAC is a family-friendly bicycle tour that takes place over Labor Day.</p><p><b>Learn more about the event here: </b><a href='https://www.dalmac.org' target='_blank'>DALMAC</a></p>");
+
+// RAGBRAI
+const markerRAGBRAI = new Marker([42.497634351701706, -96.39588306649692], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerRAGBRAI.bindPopup("<img src='CyclingMemory_IMGs/RAGBRAI.jpg' alt='Two racers going around a corner in RAGBRAI' width='300' height='200'><h5>RAGBRAI</h5><p><b>1973</b></p><p>The largest cycling tour in the world, RABGRAI riders travel from Iowa’s state line at the Missouri River to the border of the Mississippi River.</p><p><b>Learn more about the event here: </b><a href='https://ragbrai.com/history/' target='_blank'>RAGBRAI</a></p>");
+
+// Five Borough Bike Tour
+const markerFiveBorough = new Marker([40.70604274980771, -73.97956212777906], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerFiveBorough.bindPopup("<img src='CyclingMemory_IMGs/FiveBorough.jpg' alt='Big crowd at start of Five Borough Bike Tour' width='300' height='200'><h5>Five Borough Bike Tour</h5><p><b>1977</b></p><p>The Five Borough Bike Tour is a recreational charity ride that takes place on the first Sunday of May.</p><p><b>Learn more about the event here: </b><a href='https://en.wikipedia.org/wiki/Five_Boro_Bike_Tour' target='_blank'>Five Borough Bike Tour</a></p>");
+
+// STP
+const markerSTP = new Marker([47.60859697659441, -122.34393027088198], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerSTP.bindPopup("<img src='CyclingMemory_IMGs/SeattleToPortland.jpg' alt='Black and white photo of group of STP participants' width='300' height='200'><h5>Seattle to Portland Classic</h5><p><b>1979</b></p><p>The STP is exactly what it sounds like: a recreational bike ride from Seattle, Washington to Portland, Oregon. It is one of the largest recreational rides in the country.</p><p><b>Learn more about the event here: </b><a href='https://en.wikipedia.org/wiki/Seattle_to_Portland_Bicycle_Classic' target='_blank'>STP</a></p>");
+
+// BRAG
+const markerBRAG = new Marker([32.081712369686805, -81.08932568803776], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerBRAG.bindPopup("<img src='CyclingMemory_IMGs/BRAG.jpg' alt='Street with bicycle sign in Savannah, GA' width='300' height='200'><h5>Bicycle Ride Across Georgia</h5><p><b>1980</b></p><p>Inspired by the RABRAI, the Bicycle Ride Across Georgia takes riders along a grueling path throughout the state.</p><p><b>Learn more about the event here: </b><a href='https://brag.org/about/#history' target='_blank'>BRAG</a></p>");
+
+// Pan-Mass Challenge
+const markerPanMass = new Marker([42.10225024429395, -72.5823184703474], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerPanMass.bindPopup("<img src='CyclingMemory_IMGs/PanMassChallenge.jpg' alt='Group of racers mid race in Pan-Mass Challenge' width='300' height='200'><h5>Pan-Mass Challenge</h5><p><b>1980</b></p><p>According to their website, the Pan-Mass Challenge “is a Massachusetts-based bike-a-thon that raises more money for charity than any other single athletic fundraising event in the country.”</p><p><b>Learn more about the event here: </b><a href='https://www.pmc.org/about' target='_blank'>Pan-Mass Challenge</a></p>");
+
+// Second Nine Races Markers 
+
+// HotterN Hell Hundred
+const markerHotterN = new Marker([33.91394726966377, -98.48608630120201], {icon: BikeIcon},{alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerHotterN.bindPopup("<img src='CyclingMemory_IMGs/HotterNHellHundred.jpg' alt='Two cyclists pass group of people extending high fives' width='300' height='200'><h5>Hotter'N Hell Hundred</h5><p><b>1982</b></p><p>This Texas-based ride emerged rom the idea to do a 100 mile ride in 100 degree heat to celebrate the 100th year annivesary of Wichita Falls.</p><p><b>Learn more about the event here: </b><a href='hh100.org/history/' target='_blank'>HotterN Hell Hundred</a></p>");
+
+// LoToJa
+const markerLoToJa = new Marker ([41.737827656027505, -111.83409102273265], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true}); 
+markerLoToJa.bindPopup("<img src='CyclingMemory_IMGs/LOTOJA.jpg' alt='Group of racers at the starting line of the LoToJa race' width='300' height='200'><h5>LoToJa — Logan to Jackson</h5><p><b>1983</b></p><p>This 200+ mile race gives riders a grueling test of strength and stamina.</p><p><b>Learn more about the event here: </b><a href='lotoja.com/About' target='_blank'>LOTOJA</a></p>");
+
+// El Tour de Tucson
+const markerTucson = new Marker ([32.257275551532985, -110.98551521448623], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});    
+markerTucson.bindPopup("<img src='CyclingMemory_IMGs/ElTourDeTucson.jpg' alt='Landscape featuring trees and yellow grass in the foreground and mountains and blue skies in the background' width='300' height='200'><h5>El Tour de Tucson</h5><p><b>1983</b></p><p>El Tour de Tucson is a fundraising ride that attracts 7,000 to 10,000 riders each November.</p><p><b>Learn more about the event here: </b><a href='en.wikipedia.org/wiki/El_Tour_de_Tucson' target='_blank'>El Tour de Tucson</a></p>");
+  
+// Dirty Dozen 
+const markerDirtyDozen = new Marker ([40.43830184412609, -79.99672516747889], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerDirtyDozen.bindPopup("<img src='CyclingMemory_IMGs/DirtyDozenjpg' alt='A steep, descending brick road in the winter time with houses in the background' width='300' height='200'><h5>Dirty Dozen</h5><p><b>1983</b></p><p>The Dirty Dozen takes place the Saturday before the Halloween. Its name comes from the twelve steep hills it takes its riders through.</p><p><b>Learn more about the event here: </b><a href='en.wikipedia.org/wiki/Dirty_Dozen_(bicycle_competition)' target='_blank'>Dirty Dozen</a></p>");
+
+// Ride the Rockies
+const markerRidetheRockies = new Marker ([39.06961090109117, -108.5632245256128], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerRidetheRockies.bindPopup("<img src='CyclingMemory_IMGs/RideTheRockies.jpeg' alt='Cyclists ride along a winding road flanked with tall green trees. Two mountains stand in the background' width='300' height='200'><h5>Ride The Rockies</h5><p><b>1986</b></p><p>Ride the Rockies takes riders on a six-day journey through Colorado. Each year, the ride's route changes, but it consistently takes riders through Colorado's mountainous terrain.</p><p><b>Learn more about the event here: </b><a href='10best.usatoday.com/awards/ride-rockies-colorado/' target='_blank'>Ride the Rockies</a></p>");
+
+// Highlander Road Tour
+const markerHighlanderRoadTour = new Marker ([42.745460009461844, -77.40384946359576], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerHighlanderRoadTour.bindPopup("<img src='CyclingMemory_IMGs/HighlanderRoadTour.jpg' alt='A vintage postcard from Finger Lakes' width='300' height='200'><h5>Highlander Road Tour</h5><p><b>2000</b></p><p>The Highlander Road Tour takes place each year, but takes riders on different courses. Sometimes courses are extremely challenging and sometimes, courses invite family participation.</p><p><b>Learn more about the event here: </b><a href='highlandercycletour.com/about/' target='_blank'>Highlander Road Tour</a></p>");
+
+// California Coast Classic Tour
+const markerCaliforniaCoastClassicTour = new Marker ([37.774226909846405, -122.42421410376586], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerCaliforniaCoastClassicTour.bindPopup("<img src='CyclingMemory_IMGs/CaliforniaCoastClassic.jpg' alt='Bikers riding in the bike lane of a Californian street' width='300' height='200'><h5>California Coast Classic Tour</h5><p><b>2000</b></p><p>The California Coast Classic Tour raises money for and raises awareness about the Arthritis Foundation.</p><p><b>Learn more about the event here: </b><a href='events.arthritis.org/californiacoastclassic' target='_blank'>California Coast Classic</a></p>");
+
+// Barry-Roubaix Gravel Race
+const markerBarryRoubaixGravelRace = new Marker ([41.91706344498281, -83.39859432400311], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerBarryRoubaixGravelRace.bindPopup("<img src='CyclingMemory_IMGs/BarryRoubaix.jpg' alt='Logo for the Barry-Roubaix 2009-2018, ten year anniversary' width='300' height='200'><h5>Barry-Roubaix Gravel Race</h5><p><b>2005</b></p><p>The Barry-Roubaix Gravel Race is the world's largest gravel race taking place during the third Saturday in April.</p><p><b>Learn more about the event here: </b><a href='https://barry-roubaix.com/news/2020/4/10/barry-roubaix-history' target='_blank'>Barry-Roubaix Gravel Race</a></p>");
+
+// Unbound Gravel 
+const markerUnboundGravel = new Marker ([38.40534083106464, -96.18342918070564], {icon: BikeIcon}, {alt: "yellow diamond watch for bicycles sign"}, {autoPanOnFocus: true});
+markerUnboundGravel.bindPopup("<img src='CyclingMemory_IMGs/UnboundGravel.jpg' alt='Under a large theater sign, many cyclists congregate' width='300' height='200'><h5>Unbound Gravel</h5><p><b>2006</b></p><p>Unbound Gravel is a popular, 200-mile gravel race located in Emporia, Kansas.</p><p><b>Learn more about the event here: </b><a href='unboundgravel.com/about/' target='_blank'>Unbound Gravel</a></p>"); 
+
+// Define markers without .addTo(map), then:
+const group1 = new LayerGroup([
+    markerSomer,
+    markerScioto,
+    markerMidnight,
+    markerDALMAC,
+    markerRAGBRAI,
+    markerFiveBorough,
+    markerSTP,
+    markerBRAG,
+    markerPanMass,
+    markerHotterN,
+    markerLoToJa,
+    markerTucson,
+    markerDirtyDozen,
+    markerRidetheRockies,
+    markerHighlanderRoadTour,
+    markerCaliforniaCoastClassicTour,
+    markerBarryRoubaixGravelRace,
+    markerUnboundGravel,
+]).addTo(map);
+*/
+
+var sliderControl1 = L.control.sliderControl( {
+    layer: group1, // REQUIRED
+    position: 'bottomleft', // OPTIONAL: default 'topright'
+    timeStrLength: 4,
+    showAllOnStart: false,
+    alwaysShowDate: true, // to make the date box below the slider persistent
+    showAllPopups: false, // to show all popups, instead of only one; same as the popup option "autoClose: false"
+    showPopups: false // to set it so, when a marker is generated by the slider, its popup doesn't automatically display
+});
+
+// Add slider to map
+map.addControl(sliderControl1);
+
+// Initialize slider
+sliderControl1.startSlider();
+
+</script>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

@@ -10850,6 +10850,72 @@ body {
   width: 100%;
 }
 
+/* Make the track larger and change its color */
+#myMap #leaflet-slider {
+  width: 300px !important;
+  height: 8px;
+  border: 0;
+  background: #d7e3ed;
+}
+
+#myMap #leaflet-slider .ui-slider-range {
+  background: #168aad;
+}
+
+#myMap #leaflet-slider .ui-slider-handle {
+  width: 12px;
+  height: 12px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #05668d;
+  cursor: grab;
+}
+
+/* Enlarge and recolor the year */
+#myMap #slider-timestamp {
+  width: 200px !important;
+  color: #05668d;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* Make the track larger and change its color */
+#myMap .leaflet-control .slider.ui-slider {
+  width: 300px !important;
+}
+
+#myMap #leaflet-slider {
+  width: 300px !important;
+  height: 12px;
+  border: 0;
+  background: #d7e3ed;
+}
+
+#myMap #leaflet-slider .ui-slider-range {
+  background: #168aad;
+}
+
+#myMap #leaflet-slider .ui-slider-handle {
+  width: 16px;
+  height: 16px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #05668d;
+  cursor: grab;
+}
+
+/* Enlarge and recolor the year */
+#myMap #slider-timestamp {
+  width: 300px !important;
+  height: 1rem !important;
+  color: #05668d;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1rem;
+}
+
+/*
 .leaflet-tile {
     filter: grayscale(60%) saturate(100%) brightness(90%);
 }
+*/
