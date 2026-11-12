@@ -10832,7 +10832,7 @@ body {
   margin: 0;
 }
 
-body {
+.map-page {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -10840,11 +10840,11 @@ body {
   overflow: hidden;
 }
 
-.navbar {
+.map-page .navbar {
   flex: 0 0 auto;
 }
 
-#map {
+.map-page #map {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
