@@ -10,6 +10,10 @@ The repository contains the following files and directories:
 - **'About.html'** - Contains the HTML code for the project's About Page. 
 - **'BikeIcon.png'** - An image used for our map marker. 
 - **'index.html'** - The main HTML file for our project. 
+## Credits and Licensing
+Basemap © [OpenStreetMap]([url](https://www.openstreetmap.org/copyright)) contributors. Map data is available under the Open Database License. The standard-style tiles are a Produced Work of the OpenStreetMap Foundation and carry the same attribution.
+
+Map © [Thunderforest]([url](https://www.thunderforest.com/terms/)). [OpenCycleMap]([url](https://www.thunderforest.com/maps/opencyclemap/)) is a global cycle map for apps and websites.
 ## Key Contacts
 Marinna Guzy
 Steven Brooks 
